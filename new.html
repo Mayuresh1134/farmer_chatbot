@@ -1,0 +1,397 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriBot - Farmer's AI Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #388E3C;
+            --light-color: #F1F8E9;
+            --dark-color: #2E7D32;
+            --text-color: #333;
+            --white: #fff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 15px 0;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 180px);
+            max-height: 700px;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .chat-header {
+            background-color: var(--secondary-color);
+            color: var(--white);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-header .material-icons {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: var(--light-color);
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-user {
+            align-items: flex-end;
+        }
+
+        .message-bot {
+            align-items: flex-start;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 18px;
+            margin-bottom: 5px;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot-message {
+            background-color: var(--white);
+            color: var(--text-color);
+            border: 1px solid #ddd;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: #777;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background-color: var(--white);
+            border-top: 1px solid #eee;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .chat-input button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 25px;
+            padding: 0 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .chat-input button:hover {
+            background-color: var(--dark-color);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background-color: var(--white);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px 15px;
+            background-color: var(--white);
+            border-radius: 18px;
+            margin-bottom: 15px;
+            width: fit-content;
+            border: 1px solid #ddd;
+        }
+
+        .typing-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #777;
+            margin-right: 4px;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+            margin-right: 0;
+        }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                height: calc(100vh - 160px);
+            }
+            
+            .message-content {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>AgriBot 🌱</h1>
+            <p>Your AI-powered farming assistant</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="chat-container">
+            <div class="chat-header">
+                <span class="material-icons">agriculture</span>
+                <h2>Farmer's Assistant</h2>
+            </div>
+            
+            <div class="chat-messages" id="chat-messages">
+                <div class="message message-bot">
+                    <div class="message-content bot-message">
+                        Hello! I'm AgriBot, your AI farming assistant. How can I help you today? You can ask me about crop advice, pest control, weather impacts, or any other farming-related questions.
+                    </div>
+                    <div class="message-time">Just now</div>
+                </div>
+            </div>
+            
+            <div class="typing-indicator" id="typing-indicator">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+            </div>
+            
+            <div class="chat-input">
+                <input type="text" id="user-input" placeholder="Ask me anything about farming..." autocomplete="off">
+                <button id="send-button">
+                    <span class="material-icons">send</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <h3>Crop Advice</h3>
+                <p>Get personalized recommendations for planting, growing, and harvesting various crops.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Pest Control</h3>
+                <p>Identify pests and diseases and learn organic and chemical treatment options.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Soil Health</h3>
+                <p>Understand your soil needs and get fertilization recommendations.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chat-messages');
+            const userInput = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-button');
+            const typingIndicator = document.getElementById('typing-indicator');
+            
+            // Generate a unique session ID
+            const sessionId = 'session_' + Math.random().toString(36).substr(2, 9);
+            
+            // Load chat history if available
+            loadChatHistory();
+            
+            // Send message on button click
+            sendButton.addEventListener('click', sendMessage);
+            
+            // Send message on Enter key
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            function sendMessage() {
+                const message = userInput.value.trim();
+                if (message === '') return;
+                
+                // Add user message to chat
+                addMessage(message, 'user');
+                userInput.value = '';
+                
+                // Show typing indicator
+                typingIndicator.style.display = 'block';
+                scrollToBottom();
+                
+                // Send message to server
+                fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Hide typing indicator
+                    typingIndicator.style.display = 'none';
+                    
+                    if (data.error) {
+                        addMessage('Error: ' + data.error, 'bot');
+                    } else {
+                        addMessage(data.response, 'bot');
+                    }
+                })
+                .catch(error => {
+                    typingIndicator.style.display = 'none';
+                    addMessage('Sorry, there was an error processing your request.', 'bot');
+                    console.error('Error:', error);
+                });
+            }
+            
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message message-${sender}`;
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = `message-content ${sender}-message`;
+                contentDiv.textContent = text;
+                
+                const timeDiv = document.createElement('div');
+                timeDiv.className = 'message-time';
+                timeDiv.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                messageDiv.appendChild(contentDiv);
+                messageDiv.appendChild(timeDiv);
+                chatMessages.appendChild(messageDiv);
+                
+                scrollToBottom();
+            }
+            
+            function loadChatHistory() {
+                fetch(`/api/history?session_id=${sessionId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        // Clear the initial bot message
+                        chatMessages.innerHTML = '';
+                        
+                        data.forEach(chat => {
+                            addMessage(chat.user_input, 'user');
+                            addMessage(chat.bot_response, 'bot');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading chat history:', error);
+                });
+            }
+            
+            function scrollToBottom() {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>
